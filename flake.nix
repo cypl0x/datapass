@@ -58,13 +58,15 @@
           version = "0.1.0";
 
           buildInputs = with pkgs;
-            [
+            (pkgs.lib.optionals (!pkgs.stdenv.isDarwin) [
               openssl
-            ]
-            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-              pkgs.darwin.apple_sdk.frameworks.Security
-              pkgs.darwin.apple_sdk.frameworks.SystemConfiguration
-            ];
+            ])
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (
+              with pkgs.darwin.apple_sdk.frameworks; [
+                Security
+                SystemConfiguration
+              ]
+            );
 
           nativeBuildInputs = with pkgs; [
             pkg-config
