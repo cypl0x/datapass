@@ -41,7 +41,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]  # Temporarily disabled macOS due to nixpkgs darwin.apple_sdk_11_0 migration issue
+        os: [ubuntu-latest] # Temporarily disabled macOS due to nixpkgs darwin.apple_sdk_11_0 migration issue
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
