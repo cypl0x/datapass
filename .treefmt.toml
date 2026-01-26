@@ -1,3 +1,6 @@
+# Exclude test HTML files from formatting (they're saved copies from websites)
+excludes = ["test/**/*.html"]
+
 [formatter.nix]
 command = "alejandra"
 includes = ["*.nix"]
@@ -21,3 +24,9 @@ includes = ["*.md"]
 command = "prettier"
 options = ["--write"]
 includes = ["*.yml", "*.yaml"]
+
+[formatter.html]
+command = "prettier"
+options = ["--write"]
+includes = ["*.html"]
+excludes = ["test/**"]

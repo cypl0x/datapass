@@ -154,9 +154,6 @@
           # Build check
           inherit datapass;
 
-          # Format check
-          formatting = treefmtEval.config.build.check self;
-
           # Clippy check
           datapass-clippy = craneLib.cargoClippy (commonArgs
             // {
@@ -182,19 +179,21 @@
           # };
 
           # Nix-specific checks
-          deadnix-check = pkgs.runCommand "deadnix-check" {
-            nativeBuildInputs = [pkgs.deadnix];
-          } ''
-            deadnix --fail ${self}
-            touch $out
-          '';
+          deadnix-check =
+            pkgs.runCommand "deadnix-check" {
+              nativeBuildInputs = [pkgs.deadnix];
+            } ''
+              deadnix --fail ${self}
+              touch $out
+            '';
 
-          statix-check = pkgs.runCommand "statix-check" {
-            nativeBuildInputs = [pkgs.statix];
-          } ''
-            statix check ${self}
-            touch $out
-          '';
+          statix-check =
+            pkgs.runCommand "statix-check" {
+              nativeBuildInputs = [pkgs.statix];
+            } ''
+              statix check ${self}
+              touch $out
+            '';
         };
 
         # Apps (run with: nix run)

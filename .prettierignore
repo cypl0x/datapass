@@ -1,0 +1,3 @@
+# Exclude test HTML files (they're saved copies from websites with malformed HTML)
+test/**/*.html
+test/
