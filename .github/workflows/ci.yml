@@ -41,7 +41,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]  # Temporarily disabled macOS due to nixpkgs darwin.apple_sdk_11_0 migration issue
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
@@ -85,10 +85,11 @@ jobs:
             os: ubuntu-latest
           - system: aarch64-linux
             os: ubuntu-latest
-          - system: x86_64-darwin
-            os: macos-15-large
-          - system: aarch64-darwin
-            os: macos-latest
+          # Temporarily disabled Darwin builds due to nixpkgs darwin.apple_sdk_11_0 migration issue
+          # - system: x86_64-darwin
+          #   os: macos-15-large
+          # - system: aarch64-darwin
+          #   os: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
