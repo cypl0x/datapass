@@ -86,7 +86,7 @@ jobs:
           - system: aarch64-linux
             os: ubuntu-latest
           - system: x86_64-darwin
-            os: macos-13
+            os: macos-15-large
           - system: aarch64-darwin
             os: macos-latest
     steps:
