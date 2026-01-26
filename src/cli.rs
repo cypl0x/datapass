@@ -70,6 +70,7 @@ pub struct Cli {
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
+#[allow(clippy::enum_variant_names)]
 pub enum Shell {
     Bash,
     Zsh,

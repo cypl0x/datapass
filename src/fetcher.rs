@@ -31,9 +31,9 @@ pub fn fetch_html(url: Option<&str>, cookie: Option<&str>) -> Result<String> {
     let response = request.send()?;
 
     if !response.status().is_success() {
-        return Err(DatapassError::FetchError(reqwest::Error::from(
+        return Err(DatapassError::FetchError(
             response.error_for_status().unwrap_err(),
-        )));
+        ));
     }
 
     let html = response.text()?;

@@ -1,5 +1,4 @@
 use crate::types::DataUsage;
-use indicatif::{ProgressBar, ProgressStyle};
 use owo_colors::OwoColorize;
 
 /// Display format options
