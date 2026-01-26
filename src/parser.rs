@@ -6,6 +6,16 @@ use scraper::{Html, Selector};
 pub fn parse_html(html: &str) -> Result<DataUsage> {
     let document = Html::parse_document(html);
 
+    // Check if this is an authentication/redirect page
+    if is_auth_required_page(&document) {
+        return Err(DatapassError::DataNotFound(
+            "Authentication required. The website requires:\n  \
+            - Access from Telekom mobile network, OR\n  \
+            - Valid login session\n  \
+            \nTo test locally, use: --file <saved-html-file>".to_string()
+        ));
+    }
+
     // Extract plan name from title
     let plan_name = extract_plan_name(&document)?;
 
@@ -83,6 +93,19 @@ fn extract_data_usage(document: &Html) -> Result<(f64, f64)> {
     }
 
     Err(DatapassError::DataNotFound("Could not find data usage information".to_string()))
+}
+
+/// Check if the page is an authentication/redirect page
+fn is_auth_required_page(document: &Html) -> bool {
+    // Check for common redirect/auth indicators
+    let body_text = document.root_element().text().collect::<String>().to_lowercase();
+
+    // German: "Direkter Zugriff auf die Seite nicht möglich"
+    // German: "Weiterleitung" (Redirect)
+    // English: "Direct access to the page not possible"
+    body_text.contains("direkter zugriff")
+        || body_text.contains("direct access to the page not possible")
+        || (body_text.contains("weiterleitung") && body_text.contains("nicht möglich"))
 }
 
 /// Parse a number string, handling both German (comma) and English (period) decimal formats
