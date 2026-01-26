@@ -161,6 +161,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "Requires test file not available in Nix build"]
     fn test_parse_test_html() {
         let html = std::fs::read_to_string("test/Data usage - MagentaMobil Prepaid L.html")
             .expect("Failed to read test file");
