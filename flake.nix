@@ -96,7 +96,7 @@
         # Package outputs
         packages = {
           default = datapass;
-          datapass = datapass;
+          inherit datapass;
         };
 
         # Development shell
