@@ -13,7 +13,13 @@ pub use types::DataUsage;
 
 /// Main entry point for library usage
 pub fn get_data_usage(url: Option<&str>) -> Result<DataUsage> {
-    let html = fetcher::fetch_html(url)?;
+    let html = fetcher::fetch_html(url, None)?;
+    parser::parse_html(&html)
+}
+
+/// Get data usage with cookie authentication
+pub fn get_data_usage_with_cookie(url: Option<&str>, cookie: &str) -> Result<DataUsage> {
+    let html = fetcher::fetch_html(url, Some(cookie))?;
     parser::parse_html(&html)
 }
 

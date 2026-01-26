@@ -14,11 +14,20 @@ A fast, lightweight CLI tool to fetch and display mobile data usage from [datapa
 
 ## Important Note
 
-**Authentication Required**: The datapass.de website requires authentication (typically via mobile network) to access your data usage. When running the tool without the `--file` option, you'll need:
-- Active Telekom mobile data connection, OR
-- Valid session cookies from a browser logged into datapass.de
+**Authentication Required**: The datapass.de website requires authentication cookies. When running the tool without the `--file` option, you'll need:
 
-For testing and development, use the `--file` option with a locally saved HTML file.
+**Option 1 (Recommended):** Use browser cookies
+```bash
+# Extract cookies from your browser and use them
+./datapass --cookie "JSESSIONID=your-session-id-here"
+```
+See [COOKIE_AUTH.md](COOKIE_AUTH.md) for detailed instructions on extracting cookies.
+
+**Option 2:** Use with saved HTML file
+```bash
+# Save the page from your authenticated browser, then:
+./datapass --file saved-page.html
+```
 
 ## Installation
 

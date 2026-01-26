@@ -56,6 +56,10 @@ pub struct Cli {
     #[arg(long, value_name = "FILE")]
     pub log: Option<String>,
 
+    /// Cookie string to use for authentication (e.g., "session=abc123; token=xyz")
+    #[arg(short = 'C', long, value_name = "COOKIES")]
+    pub cookie: Option<String>,
+
     /// Generate shell completions for the specified shell
     #[arg(long, value_name = "SHELL", value_enum)]
     pub generate_completions: Option<Shell>,

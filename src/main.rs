@@ -65,7 +65,7 @@ fn run() -> Result<()> {
     let html = if let Some(file_path) = &cli.file {
         fetcher::read_local_file(file_path)?
     } else {
-        fetcher::fetch_html(cli.url.as_deref())?
+        fetcher::fetch_html(cli.url.as_deref(), cli.cookie.as_deref())?
     };
 
     let data = parser::parse_html(&html)?;
@@ -81,12 +81,13 @@ fn run_watch_mode(interval: u64, cli: &Cli) -> Result<()> {
     // Create a closure that captures the CLI config
     let url = cli.url.clone();
     let file = cli.file.clone();
+    let cookie = cli.cookie.clone();
 
     let fetch_fn = move || -> Result<types::DataUsage> {
         let html = if let Some(ref file_path) = file {
             fetcher::read_local_file(file_path)?
         } else {
-            fetcher::fetch_html(url.as_deref())?
+            fetcher::fetch_html(url.as_deref(), cookie.as_deref())?
         };
         parser::parse_html(&html)
     };

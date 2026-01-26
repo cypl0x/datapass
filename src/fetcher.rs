@@ -4,7 +4,7 @@ const DEFAULT_URL: &str = "https://datapass.de";
 const USER_AGENT: &str = "datapass-cli/0.1.0";
 
 /// Fetch HTML content from the specified URL or default datapass.de
-pub fn fetch_html(url: Option<&str>) -> Result<String> {
+pub fn fetch_html(url: Option<&str>, cookie: Option<&str>) -> Result<String> {
     let target_url = url.unwrap_or(DEFAULT_URL);
 
     log::info!("Fetching data from: {}", target_url);
@@ -12,11 +12,18 @@ pub fn fetch_html(url: Option<&str>) -> Result<String> {
     let client = reqwest::blocking::Client::builder()
         .user_agent(USER_AGENT)
         .timeout(std::time::Duration::from_secs(30))
+        .redirect(reqwest::redirect::Policy::limited(10))
         .build()?;
 
-    let response = client
-        .get(target_url)
-        .send()?;
+    let mut request = client.get(target_url);
+
+    // Add cookies if provided
+    if let Some(cookie_str) = cookie {
+        log::debug!("Using cookies for authentication");
+        request = request.header("Cookie", cookie_str);
+    }
+
+    let response = request.send()?;
 
     if !response.status().is_success() {
         return Err(DatapassError::FetchError(
