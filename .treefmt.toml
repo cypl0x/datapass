@@ -1,0 +1,23 @@
+[formatter.nix]
+command = "alejandra"
+includes = ["*.nix"]
+
+[formatter.rust]
+command = "rustfmt"
+options = ["--edition", "2021"]
+includes = ["*.rs"]
+
+[formatter.toml]
+command = "taplo"
+options = ["format"]
+includes = ["*.toml"]
+
+[formatter.markdown]
+command = "prettier"
+options = ["--write"]
+includes = ["*.md"]
+
+[formatter.yaml]
+command = "prettier"
+options = ["--write"]
+includes = ["*.yml", "*.yaml"]

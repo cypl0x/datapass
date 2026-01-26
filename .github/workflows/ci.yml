@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Check formatting
+  format:
+    name: Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Check formatting
+        run: nix fmt -- --check .
+
+  # Nix-specific checks
+  nix-checks:
+    name: Nix Checks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        check: [deadnix-check, statix-check]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Run ${{ matrix.check }}
+        run: nix build .#checks.x86_64-linux.${{ matrix.check }} -L
+
+  # Build and test
+  build-and-test:
+    name: Build and Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Build
+        run: nix build -L
+      - name: Run tests
+        run: nix develop --command cargo test
+
+  # Clippy
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Run Clippy
+        run: nix build .#checks.x86_64-linux.datapass-clippy -L
+
+  # Documentation
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v15
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Build documentation
+        run: nix build .#checks.x86_64-linux.datapass-doc -L
+
+  # Build for multiple platforms
+  build-matrix:
+    name: Build ${{ matrix.system }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            os: ubuntu-latest
+          - system: aarch64-linux
+            os: ubuntu-latest
+          - system: x86_64-darwin
+            os: macos-13
+          - system: aarch64-darwin
+            os: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v15
+        with:
+          extra-conf: |
+            extra-platforms = ${{ matrix.system == 'aarch64-linux' && 'aarch64-linux' || '' }}
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - name: Set up QEMU (for aarch64-linux)
+        if: matrix.system == 'aarch64-linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
+      - name: Build for ${{ matrix.system }}
+        run: nix build .#packages.${{ matrix.system }}.datapass -L
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: datapass-${{ matrix.system }}
+          path: result/bin/datapass
+          if-no-files-found: error
+
+  # Create release on tag
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [format, nix-checks, build-and-test, clippy, docs, build-matrix]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          draft: false
+          prerelease: false
