@@ -68,32 +68,30 @@ fn display_human(data: &DataUsage, use_color: bool) {
 
 /// Display a progress bar showing usage
 fn display_progress_bar(data: &DataUsage, use_color: bool) {
-    let bar = ProgressBar::new(10000); // Use 10000 for 2 decimal precision
+    let bar_width = 40;
+    let filled = ((data.percentage / 100.0) * bar_width as f64).round() as usize;
+    let filled = filled.min(bar_width); // Ensure we don't exceed bar width
+    let empty = bar_width - filled;
 
-    let style = if use_color {
+    if use_color {
+        use owo_colors::OwoColorize;
+
         // Determine color based on remaining percentage
-        let color = if data.remaining_percentage() > 50.0 {
-            "green"
+        let filled_str = if data.remaining_percentage() > 50.0 {
+            "█".repeat(filled).green().to_string()
         } else if data.remaining_percentage() > 20.0 {
-            "yellow"
+            "█".repeat(filled).yellow().to_string()
         } else {
-            "red"
+            "█".repeat(filled).red().to_string()
         };
 
-        ProgressStyle::default_bar()
-            .template(&format!("{{bar:40.{}/white}} {{percent}}%", color))
-            .unwrap()
-            .progress_chars("█▓░")
-    } else {
-        ProgressStyle::default_bar()
-            .template("{bar:40} {percent}%")
-            .unwrap()
-            .progress_chars("█▓░")
-    };
+        let empty_str = "░".repeat(empty).dimmed().to_string();
 
-    bar.set_style(style);
-    bar.set_position((data.percentage * 100.0) as u64);
-    bar.finish();
+        println!("{}{} {:.2}%", filled_str, empty_str, data.percentage);
+    } else {
+        println!("{}{} {:.2}%", "█".repeat(filled), "░".repeat(empty), data.percentage);
+    }
+
     println!(); // Add newline after progress bar
 }
 
