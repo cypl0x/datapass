@@ -12,7 +12,8 @@ pub fn parse_html(html: &str) -> Result<DataUsage> {
             "Authentication required. The website requires:\n  \
             - Access from Telekom mobile network, OR\n  \
             - Valid login session\n  \
-            \nTo test locally, use: --file <saved-html-file>".to_string()
+            \nTo test locally, use: --file <saved-html-file>"
+                .to_string(),
         ));
     }
 
@@ -46,7 +47,9 @@ fn extract_plan_name(document: &Html) -> Result<String> {
             // Replace non-breaking spaces with regular spaces and trim
             s.replace('\u{00A0}', " ").trim().to_string()
         })
-        .ok_or_else(|| DatapassError::ParseError("Could not extract plan name from title".to_string()))?;
+        .ok_or_else(|| {
+            DatapassError::ParseError("Could not extract plan name from title".to_string())
+        })?;
 
     Ok(plan_name)
 }
@@ -92,13 +95,19 @@ fn extract_data_usage(document: &Html) -> Result<(f64, f64)> {
         }
     }
 
-    Err(DatapassError::DataNotFound("Could not find data usage information".to_string()))
+    Err(DatapassError::DataNotFound(
+        "Could not find data usage information".to_string(),
+    ))
 }
 
 /// Check if the page is an authentication/redirect page
 fn is_auth_required_page(document: &Html) -> bool {
     // Check for common redirect/auth indicators
-    let body_text = document.root_element().text().collect::<String>().to_lowercase();
+    let body_text = document
+        .root_element()
+        .text()
+        .collect::<String>()
+        .to_lowercase();
 
     // German: "Direkter Zugriff auf die Seite nicht möglich"
     // German: "Weiterleitung" (Redirect)
@@ -139,7 +148,11 @@ mod tests {
         "#;
 
         let result = parse_html(html);
-        assert!(result.is_ok(), "Failed to parse German format HTML: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to parse German format HTML: {:?}",
+            result.err()
+        );
 
         let data = result.unwrap();
         assert_eq!(data.remaining_gb, 38.36);

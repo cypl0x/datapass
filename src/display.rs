@@ -60,7 +60,11 @@ fn display_human(data: &DataUsage, use_color: bool) {
     print!("{}", plan_line);
     println!("Used:      {} ({:.2}%)", used_display, data.percentage);
     println!("Total:     {} (100%)", total_display);
-    println!("Remaining: {} ({:.2}%)", remaining_display, data.remaining_percentage());
+    println!(
+        "Remaining: {} ({:.2}%)",
+        remaining_display,
+        data.remaining_percentage()
+    );
 
     // Display progress bar
     display_progress_bar(data, use_color);
@@ -89,7 +93,12 @@ fn display_progress_bar(data: &DataUsage, use_color: bool) {
 
         println!("{}{} {:.2}%", filled_str, empty_str, data.percentage);
     } else {
-        println!("{}{} {:.2}%", "█".repeat(filled), "░".repeat(empty), data.percentage);
+        println!(
+            "{}{} {:.2}%",
+            "█".repeat(filled),
+            "░".repeat(empty),
+            data.percentage
+        );
     }
 
     println!(); // Add newline after progress bar

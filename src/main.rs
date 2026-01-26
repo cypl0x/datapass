@@ -7,7 +7,7 @@ mod tui;
 mod types;
 
 use clap::{CommandFactory, Parser};
-use clap_complete::{generate, Shell as ClapShell};
+use clap_complete::{Shell as ClapShell, generate};
 use clap_mangen::Man;
 use cli::{Cli, Shell};
 use error::Result;
@@ -114,9 +114,7 @@ fn setup_logging(cli: &Cli) -> Result<()> {
             .target(env_logger::Target::Pipe(Box::new(log_file)))
             .init();
     } else if cli.verbose {
-        env_logger::Builder::new()
-            .filter_level(log_level)
-            .init();
+        env_logger::Builder::new().filter_level(log_level).init();
     }
 
     Ok(())

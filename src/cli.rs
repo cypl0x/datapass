@@ -88,7 +88,9 @@ pub enum Format {
 
 impl Cli {
     pub fn validate(&self) -> Result<(), String> {
-        if self.watch.is_some() && (self.used || self.total || self.remaining || self.percentage || self.plan) {
+        if self.watch.is_some()
+            && (self.used || self.total || self.remaining || self.percentage || self.plan)
+        {
             return Err("Watch mode is not compatible with single value output flags".to_string());
         }
 

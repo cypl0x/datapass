@@ -14,6 +14,7 @@ If the website works in your browser but not with the CLI, it's because your bro
 ### Method 1: Using Browser Developer Tools (All Browsers)
 
 #### Firefox
+
 1. Open datapass.de in Firefox
 2. Press `F12` to open Developer Tools
 3. Go to the **Storage** tab
@@ -22,6 +23,7 @@ If the website works in your browser but not with the CLI, it's because your bro
 6. Right-click and "Copy" the cookie value
 
 #### Chrome/Chromium/Edge
+
 1. Open datapass.de in Chrome
 2. Press `F12` to open Developer Tools
 3. Go to the **Application** tab
@@ -29,6 +31,7 @@ If the website works in your browser but not with the CLI, it's because your bro
 5. Copy the cookie name and value
 
 #### Safari
+
 1. Open datapass.de in Safari
 2. Develop → Show Web Inspector (enable Develop menu in Preferences first)
 3. Go to **Storage** tab
@@ -38,6 +41,7 @@ If the website works in your browser but not with the CLI, it's because your bro
 ### Method 2: Using Browser Extensions
 
 #### Cookie Editor Extensions
+
 - **Firefox**: [Cookie-Editor](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor/)
 - **Chrome**: [EditThisCookie](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg)
 
@@ -46,6 +50,7 @@ These extensions let you export all cookies easily.
 ### Method 3: Get All Cookies at Once
 
 #### In Developer Tools (Network Tab)
+
 1. Open datapass.de in your browser
 2. Press `F12` → **Network** tab
 3. Reload the page
@@ -103,6 +108,7 @@ Remaining: 38.36 GB (76.72%)
 ## Security Notes
 
 ⚠️ **Important:**
+
 - Cookies contain authentication tokens - treat them like passwords!
 - Don't share your cookies with others
 - Cookies may expire after some time
@@ -111,12 +117,15 @@ Remaining: 38.36 GB (76.72%)
 ## Troubleshooting
 
 ### Still getting authentication error?
+
 - Make sure you copied the complete cookie string
 - Check that the cookies haven't expired (get fresh ones)
 - Try copying the full cookie string from the Network tab
 
 ### Which cookies do I need?
+
 The most important ones are usually:
+
 - `JSESSIONID` - Java session ID
 - `dtag_session` or similar - Telekom session
 - Any cookie with "session" or "auth" in the name

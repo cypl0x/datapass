@@ -3,15 +3,15 @@ use crate::types::DataUsage;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Frame, Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, Paragraph},
-    Frame, Terminal,
 };
 use std::io;
 use std::time::{Duration, Instant};
@@ -128,7 +128,11 @@ impl TuiApp {
 
     fn render_title(&self, frame: &mut Frame, area: Rect) {
         let title = Paragraph::new("Mobile Data Usage Monitor")
-            .style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD))
+            .style(
+                Style::default()
+                    .fg(Color::Cyan)
+                    .add_modifier(Modifier::BOLD),
+            )
             .block(Block::default().borders(Borders::ALL));
         frame.render_widget(title, area);
     }
@@ -148,9 +152,10 @@ impl TuiApp {
 
     fn render_data_info(&self, frame: &mut Frame, area: Rect) {
         let text = if let Some(ref error) = self.error {
-            vec![
-                Line::from(Span::styled(error, Style::default().fg(Color::Red))),
-            ]
+            vec![Line::from(Span::styled(
+                error,
+                Style::default().fg(Color::Red),
+            ))]
         } else if let Some(ref data) = self.data {
             vec![
                 Line::from(vec![
@@ -170,7 +175,11 @@ impl TuiApp {
                 Line::from(vec![
                     Span::styled("Remaining: ", Style::default().fg(Color::White)),
                     Span::styled(
-                        format!("{:.2} GB ({:.2}%)", data.remaining_gb, data.remaining_percentage()),
+                        format!(
+                            "{:.2} GB ({:.2}%)",
+                            data.remaining_gb,
+                            data.remaining_percentage()
+                        ),
                         Style::default().fg(Color::Green),
                     ),
                 ]),
@@ -179,8 +188,8 @@ impl TuiApp {
             vec![Line::from("Loading data...")]
         };
 
-        let info = Paragraph::new(text)
-            .block(Block::default().borders(Borders::ALL).title("Data Usage"));
+        let info =
+            Paragraph::new(text).block(Block::default().borders(Borders::ALL).title("Data Usage"));
         frame.render_widget(info, area);
     }
 

@@ -17,13 +17,16 @@ A fast, lightweight CLI tool to fetch and display mobile data usage from [datapa
 **Authentication Required**: The datapass.de website requires authentication cookies. When running the tool without the `--file` option, you'll need:
 
 **Option 1 (Recommended):** Use browser cookies
+
 ```bash
 # Extract cookies from your browser and use them
 ./datapass --cookie "JSESSIONID=your-session-id-here"
 ```
+
 See [COOKIE_AUTH.md](COOKIE_AUTH.md) for detailed instructions on extracting cookies.
 
 **Option 2:** Use with saved HTML file
+
 ```bash
 # Save the page from your authenticated browser, then:
 ./datapass --file saved-page.html
@@ -114,6 +117,7 @@ datapass --watch 300
 ```
 
 In watch mode:
+
 - Press `q` or `ESC` to quit
 - Press `r` to refresh immediately
 
@@ -271,6 +275,7 @@ The project includes comprehensive GitHub Actions workflows that:
 ## Language Support
 
 The tool supports both **German** and **English** formats:
+
 - Numbers: `38,36 GB` (German) and `38.36 GB` (English)
 - Automatically handles both comma and period decimal separators
 - Works with German (`Datennutzung`) and English (`Data usage`) page titles

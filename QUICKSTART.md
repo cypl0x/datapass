@@ -3,6 +3,7 @@
 ## Important Note
 
 **The live website requires authentication!** When you run `datapass` without arguments, it tries to fetch from datapass.de which requires:
+
 - Active Telekom mobile data connection, OR
 - Valid session cookies
 
@@ -121,6 +122,7 @@ cargo run -- --file "test/Data usage - MagentaMobil Prepaid L.html" --color
 ## Expected Output
 
 ### Default Format
+
 ```
 Plan: MagentaMobil Prepaid L
 Used:      22.12 GB (88.48%)
@@ -130,6 +132,7 @@ Remaining: 2.88 GB (11.52%)
 ```
 
 ### JSON Format
+
 ```json
 {
   "remaining_gb": 2.88,
@@ -158,6 +161,7 @@ Remaining: 2.88 GB (11.52%)
 ## Binary Size
 
 The release binary is optimized for size:
+
 - LTO enabled
 - Code generation units = 1
 - Stripped symbols

@@ -5,7 +5,11 @@ const TEST_HTML_PATH: &str = "test/Data usage - MagentaMobil Prepaid L.html";
 #[test]
 fn test_parse_test_file() {
     let result = get_data_usage_from_file(TEST_HTML_PATH);
-    assert!(result.is_ok(), "Failed to parse test HTML file: {:?}", result.err());
+    assert!(
+        result.is_ok(),
+        "Failed to parse test HTML file: {:?}",
+        result.err()
+    );
 
     let data = result.unwrap();
     assert_eq!(data.remaining_gb, 2.88, "Remaining GB mismatch");
@@ -13,8 +17,14 @@ fn test_parse_test_file() {
     assert_eq!(data.used_gb, 22.12, "Used GB mismatch");
 
     // Check percentage (allow small floating point error)
-    assert!((data.percentage - 88.48).abs() < 0.01, "Usage percentage mismatch");
-    assert!((data.remaining_percentage() - 11.52).abs() < 0.01, "Remaining percentage mismatch");
+    assert!(
+        (data.percentage - 88.48).abs() < 0.01,
+        "Usage percentage mismatch"
+    );
+    assert!(
+        (data.remaining_percentage() - 11.52).abs() < 0.01,
+        "Remaining percentage mismatch"
+    );
 
     assert_eq!(
         data.plan_name,
@@ -52,7 +62,11 @@ fn test_parse_minimal_html() {
     "#;
 
     let result = parse_data_usage(html);
-    assert!(result.is_ok(), "Failed to parse minimal HTML: {:?}", result.err());
+    assert!(
+        result.is_ok(),
+        "Failed to parse minimal HTML: {:?}",
+        result.err()
+    );
 
     let data = result.unwrap();
     assert_eq!(data.remaining_gb, 5.5);
