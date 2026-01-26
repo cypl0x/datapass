@@ -1,7 +1,8 @@
 use crate::error::{DatapassError, Result};
 
 const DEFAULT_URL: &str = "https://datapass.de";
-const USER_AGENT: &str = "datapass-cli/0.1.0";
+// Use a real browser user agent to avoid being blocked
+const USER_AGENT: &str = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36";
 
 /// Fetch HTML content from the specified URL or default datapass.de
 pub fn fetch_html(url: Option<&str>, cookie: Option<&str>) -> Result<String> {
@@ -15,13 +16,17 @@ pub fn fetch_html(url: Option<&str>, cookie: Option<&str>) -> Result<String> {
         .redirect(reqwest::redirect::Policy::limited(10))
         .build()?;
 
-    let mut request = client.get(target_url);
+    let mut request = client
+        .get(target_url)
+        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8")
+        .header("Accept-Language", "en-US,en;q=0.5")
+        .header("Cache-Control", "no-cache")
+        .header("Pragma", "no-cache");
 
-    // Add cookies if provided
-    if let Some(cookie_str) = cookie {
-        log::debug!("Using cookies for authentication");
-        request = request.header("Cookie", cookie_str);
-    }
+    // Add cookies if provided, otherwise use default Apollo cookies
+    let cookie_str = cookie.unwrap_or("Apollo-Summation-Disabled=true; Apollo-Lang=en_DE_TMDE");
+    log::debug!("Using cookies: {}", cookie_str);
+    request = request.header("Cookie", cookie_str);
 
     let response = request.send()?;
 
