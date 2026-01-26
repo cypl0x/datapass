@@ -1,5 +1,13 @@
 # Quick Start Guide
 
+## Important Note
+
+**The live website requires authentication!** When you run `datapass` without arguments, it tries to fetch from datapass.de which requires:
+- Active Telekom mobile data connection, OR
+- Valid session cookies
+
+For testing, always use the `--file` option with a saved HTML file.
+
 ## Building and Running
 
 ### Using Nix (Recommended)
@@ -29,6 +37,25 @@ cargo build --release
 
 # Run
 ./target/release/datapass --file "test/Data usage - MagentaMobil Prepaid L.html"
+```
+
+## Shell Completions & Man Page
+
+```bash
+# Generate and install shell completions
+./scripts/install-completions.sh
+
+# Generate and install man page
+./scripts/install-man.sh
+
+# Or generate manually for your shell
+./target/release/datapass --generate-completions bash
+./target/release/datapass --generate-completions zsh
+./target/release/datapass --generate-completions fish
+
+# Generate man page
+./target/release/datapass --generate-man > datapass.1
+man ./datapass.1
 ```
 
 ## Quick Examples

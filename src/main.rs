@@ -6,9 +6,12 @@ mod parser;
 mod tui;
 mod types;
 
-use clap::Parser;
-use cli::Cli;
+use clap::{CommandFactory, Parser};
+use clap_complete::{generate, Shell as ClapShell};
+use clap_mangen::Man;
+use cli::{Cli, Shell};
 use error::Result;
+use std::io;
 
 fn main() {
     if let Err(e) = run() {
@@ -19,6 +22,29 @@ fn main() {
 
 fn run() -> Result<()> {
     let cli = Cli::parse();
+
+    // Handle shell completions generation
+    if let Some(shell) = cli.generate_completions {
+        let mut cmd = Cli::command();
+        let bin_name = cmd.get_name().to_string();
+        let clap_shell = match shell {
+            Shell::Bash => ClapShell::Bash,
+            Shell::Zsh => ClapShell::Zsh,
+            Shell::Fish => ClapShell::Fish,
+            Shell::PowerShell => ClapShell::PowerShell,
+            Shell::Elvish => ClapShell::Elvish,
+        };
+        generate(clap_shell, &mut cmd, bin_name, &mut io::stdout());
+        return Ok(());
+    }
+
+    // Handle man page generation
+    if cli.generate_man {
+        let cmd = Cli::command();
+        let man = Man::new(cmd);
+        man.render(&mut io::stdout())?;
+        return Ok(());
+    }
 
     // Validate CLI arguments
     if let Err(e) = cli.validate() {

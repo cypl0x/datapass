@@ -12,6 +12,14 @@ A fast, lightweight CLI tool to fetch and display mobile data usage from [datapa
 - 🔒 **Secure**: Uses rustls for TLS (no OpenSSL runtime dependency)
 - 🌍 **Cross-platform**: Works on Linux, macOS, and more
 
+## Important Note
+
+**Authentication Required**: The datapass.de website requires authentication (typically via mobile network) to access your data usage. When running the tool without the `--file` option, you'll need:
+- Active Telekom mobile data connection, OR
+- Valid session cookies from a browser logged into datapass.de
+
+For testing and development, use the `--file` option with a locally saved HTML file.
+
 ## Installation
 
 ### Using Nix (recommended)
@@ -42,6 +50,22 @@ git clone https://github.com/yourusername/datapass
 cd datapass
 cargo build --release
 # Binary will be at target/release/datapass
+```
+
+### Install Shell Completions and Man Page
+
+```bash
+# Install shell completions (bash, zsh, fish)
+./scripts/install-completions.sh
+
+# Install man page
+./scripts/install-man.sh
+
+# Or generate them manually
+./target/release/datapass --generate-completions bash > ~/.local/share/bash-completion/completions/datapass
+./target/release/datapass --generate-completions zsh > ~/.zsh/completions/_datapass
+./target/release/datapass --generate-completions fish > ~/.config/fish/completions/datapass.fish
+./target/release/datapass --generate-man > ~/.local/share/man/man1/datapass.1
 ```
 
 ## Usage
@@ -234,6 +258,13 @@ The project includes comprehensive GitHub Actions workflows that:
 - ✅ Run Nix lints (statix)
 - ✅ Build for multiple platforms
 - ✅ Create releases with binaries for all platforms
+
+## Language Support
+
+The tool supports both **German** and **English** formats:
+- Numbers: `38,36 GB` (German) and `38.36 GB` (English)
+- Automatically handles both comma and period decimal separators
+- Works with German (`Datennutzung`) and English (`Data usage`) page titles
 
 ## Use Cases
 

@@ -74,13 +74,9 @@ fn extract_data_usage(document: &Html) -> Result<(f64, f64)> {
             .map(|elem| elem.text().collect::<String>().trim().to_string());
 
         if let (Some(remaining), Some(total)) = (remaining_text, total_text) {
-            let remaining_gb: f64 = remaining
-                .parse()
-                .map_err(|e| DatapassError::ParseError(format!("Invalid remaining value '{}': {}", remaining, e)))?;
-
-            let total_gb: f64 = total
-                .parse()
-                .map_err(|e| DatapassError::ParseError(format!("Invalid total value '{}': {}", total, e)))?;
+            // Parse numbers, handling both German (comma) and English (period) formats
+            let remaining_gb: f64 = parse_number(&remaining)?;
+            let total_gb: f64 = parse_number(&total)?;
 
             return Ok((remaining_gb, total_gb));
         }
@@ -89,9 +85,44 @@ fn extract_data_usage(document: &Html) -> Result<(f64, f64)> {
     Err(DatapassError::DataNotFound("Could not find data usage information".to_string()))
 }
 
+/// Parse a number string, handling both German (comma) and English (period) decimal formats
+fn parse_number(s: &str) -> Result<f64> {
+    // Replace German decimal comma with English period
+    let normalized = s.replace(',', ".");
+    normalized
+        .parse()
+        .map_err(|e| DatapassError::ParseError(format!("Invalid number value '{}': {}", s, e)))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_parse_german_numbers() {
+        let html = r#"
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Datennutzung - MagentaMobil Prepaid XL</title>
+            </head>
+            <body>
+                <section class="data-pass-instance" id="test-pass">
+                    <div class="remaining-volume-value">38,36</div>
+                    <div class="start-volume">51</div>
+                </section>
+            </body>
+            </html>
+        "#;
+
+        let result = parse_html(html);
+        assert!(result.is_ok(), "Failed to parse German format HTML: {:?}", result.err());
+
+        let data = result.unwrap();
+        assert_eq!(data.remaining_gb, 38.36);
+        assert_eq!(data.total_gb, 51.0);
+        assert_eq!(data.plan_name, Some("MagentaMobil Prepaid XL".to_string()));
+    }
 
     #[test]
     fn test_parse_test_html() {

@@ -1,5 +1,8 @@
 use clap::{Parser, ValueEnum};
 
+#[allow(unused_imports)]
+use clap::CommandFactory;
+
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 #[command(name = "datapass")]
@@ -52,6 +55,23 @@ pub struct Cli {
     /// Log to file
     #[arg(long, value_name = "FILE")]
     pub log: Option<String>,
+
+    /// Generate shell completions for the specified shell
+    #[arg(long, value_name = "SHELL", value_enum)]
+    pub generate_completions: Option<Shell>,
+
+    /// Generate man page
+    #[arg(long)]
+    pub generate_man: bool,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum Shell {
+    Bash,
+    Zsh,
+    Fish,
+    PowerShell,
+    Elvish,
 }
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
