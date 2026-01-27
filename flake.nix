@@ -93,7 +93,7 @@
           projectRootFile = "flake.nix";
           programs = {
             alejandra.enable = true; # Nix formatter
-            rustfmt.enable = true; # Rust formatter
+            # rustfmt handled by pre-commit hooks
             prettier.enable = true; # JSON, YAML, Markdown formatter
             taplo.enable = true; # TOML formatter
           };
