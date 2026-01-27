@@ -15,6 +15,10 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -24,6 +28,7 @@
     rust-overlay,
     crane,
     treefmt-nix,
+    git-hooks,
   }:
     flake-utils.lib.eachSystem [
       "x86_64-linux"
@@ -93,6 +98,38 @@
             taplo.enable = true; # TOML formatter
           };
         };
+
+        # Pre-commit hooks configuration
+        pre-commit-check = git-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            # Formatting
+            rustfmt.enable = true;
+            alejandra.enable = true;
+            prettier = {
+              enable = true;
+              excludes = ["test/.*\\.html$"];
+            };
+            taplo.enable = true;
+
+            # Linting
+            clippy = {
+              enable = true;
+              packageOverrides.clippy = pkgs.clippy;
+            };
+            deadnix.enable = true;
+            statix.enable = true;
+
+            # Tests
+            cargo-test = {
+              enable = true;
+              name = "cargo test";
+              entry = "${pkgs.cargo}/bin/cargo test";
+              files = "\\.(rs|toml)$";
+              pass_filenames = false;
+            };
+          };
+        };
       in {
         # Package outputs
         packages = {
@@ -136,6 +173,7 @@
           ];
 
           shellHook = ''
+            ${pre-commit-check.shellHook}
             echo "🦀 datapass development shell"
             echo "Available commands:"
             echo "  cargo build        - Build the project"
@@ -144,6 +182,8 @@
             echo "  cargo clippy       - Run linter"
             echo "  treefmt            - Format all files"
             echo "  nix flake check    - Run all checks"
+            echo ""
+            echo "✓ Pre-commit hooks installed"
           '';
         };
 
@@ -154,6 +194,9 @@
         checks = {
           # Build check
           inherit datapass;
+
+          # Pre-commit hooks check
+          inherit pre-commit-check;
 
           # Clippy check
           datapass-clippy = craneLib.cargoClippy (commonArgs

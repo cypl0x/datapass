@@ -11,7 +11,7 @@ For testing or development without Telekom network access, use the `--file` opti
 ### Using Nix (Recommended)
 
 ```bash
-# Enter development environment
+# Enter development environment (pre-commit hooks installed automatically)
 nix develop
 
 # Build the project
@@ -26,6 +26,8 @@ nix build
 # Run the Nix-built binary
 ./result/bin/datapass --file "test/Data usage - MagentaMobil Prepaid L.html"
 ```
+
+**Note:** When you enter the Nix development shell with `nix develop`, pre-commit hooks are automatically installed. These hooks will run formatters, linters, and tests before each commit to catch issues early.
 
 ### Using Cargo Only
 

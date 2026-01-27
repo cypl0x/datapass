@@ -179,7 +179,7 @@ Remaining: 38.36 GB (75.22%)
 ### Using Nix
 
 ```bash
-# Enter development shell
+# Enter development shell (automatically installs pre-commit hooks)
 nix develop
 
 # Build
@@ -194,6 +194,16 @@ nix flake check
 # Format code
 nix fmt
 ```
+
+### Pre-commit Hooks
+
+The project uses [git-hooks.nix](https://github.com/cachix/git-hooks.nix) to automatically run checks before commits:
+
+- **Formatters**: rustfmt, alejandra (Nix), prettier, taplo (TOML)
+- **Linters**: clippy, deadnix, statix
+- **Tests**: cargo test
+
+The hooks are automatically installed when you enter the Nix development shell with `nix develop`. They will run automatically before each commit to ensure code quality and catch issues early.
 
 ### Using Cargo
 
