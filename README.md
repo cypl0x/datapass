@@ -44,13 +44,13 @@ If you need to use specific cookies for authentication, you can provide them:
 
 ```bash
 # Run directly
-nix run github:yourusername/datapass
+nix run github:cypl0x/datapass
 
 # Install to profile
-nix profile install github:yourusername/datapass
+nix profile install github:cypl0x/datapass
 
 # Build from source
-git clone https://github.com/yourusername/datapass
+git clone https://github.com/cypl0x/datapass
 cd datapass
 nix build
 ```
@@ -58,13 +58,13 @@ nix build
 ### Using Cargo
 
 ```bash
-cargo install --git https://github.com/yourusername/datapass
+cargo install --git https://github.com/cypl0x/datapass
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/datapass
+git clone https://github.com/cypl0x/datapass
 cd datapass
 cargo build --release
 # Binary will be at target/release/datapass
