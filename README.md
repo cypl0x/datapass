@@ -122,7 +122,14 @@ datapass --watch 60
 datapass --watch 300
 ```
 
-In watch mode:
+The TUI dashboard displays:
+
+- Plan name and validity date
+- Data usage statistics with colored indicators
+- Visual progress gauge
+- Auto-refresh countdown
+
+Controls:
 
 - Press `q` or `ESC` to quit
 - Press `r` to refresh immediately

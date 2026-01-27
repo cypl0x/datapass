@@ -3,15 +3,15 @@ use crate::types::DataUsage;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEventKind},
     execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
 use ratatui::{
-    Frame, Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Gauge, Paragraph},
+    Frame, Terminal,
 };
 use std::io;
 use std::time::{Duration, Instant};
@@ -103,7 +103,7 @@ impl TuiApp {
             .margin(2)
             .constraints([
                 Constraint::Length(3),
-                Constraint::Length(3),
+                Constraint::Length(5),
                 Constraint::Length(7),
                 Constraint::Min(0),
                 Constraint::Length(3),
@@ -113,7 +113,7 @@ impl TuiApp {
         // Title
         self.render_title(frame, chunks[0]);
 
-        // Plan name
+        // Plan name and validity
         self.render_plan(frame, chunks[1]);
 
         // Data usage info
@@ -138,15 +138,26 @@ impl TuiApp {
     }
 
     fn render_plan(&self, frame: &mut Frame, area: Rect) {
-        let plan_text = if let Some(ref data) = self.data {
-            data.plan_name.as_deref().unwrap_or("Unknown Plan")
+        let text = if let Some(ref data) = self.data {
+            let plan_name = data.plan_name.as_deref().unwrap_or("Unknown Plan");
+            let mut lines = vec![Line::from(Span::styled(
+                plan_name,
+                Style::default().fg(Color::Yellow),
+            ))];
+
+            if let Some(ref valid_until) = data.valid_until {
+                lines.push(Line::from(Span::styled(
+                    format!("Valid until: {}", valid_until),
+                    Style::default().fg(Color::Cyan),
+                )));
+            }
+
+            lines
         } else {
-            "Loading..."
+            vec![Line::from("Loading...")]
         };
 
-        let plan = Paragraph::new(plan_text)
-            .style(Style::default().fg(Color::Yellow))
-            .block(Block::default().borders(Borders::ALL).title("Plan"));
+        let plan = Paragraph::new(text).block(Block::default().borders(Borders::ALL).title("Plan"));
         frame.render_widget(plan, area);
     }
 

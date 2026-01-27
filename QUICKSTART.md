@@ -77,7 +77,7 @@ datapass --remaining   # 2.88
 datapass --percentage  # 88.48
 datapass --plan        # MagentaMobil Prepaid L
 
-# Watch mode (TUI dashboard, refresh every 60 seconds)
+# Watch mode (TUI dashboard with plan, validity, usage stats, refresh every 60 seconds)
 datapass --watch 60
 
 # Use custom URL
