@@ -9,10 +9,8 @@ pub fn parse_html(html: &str) -> Result<DataUsage> {
     // Check if this is an authentication/redirect page
     if is_auth_required_page(&document) {
         return Err(DatapassError::DataNotFound(
-            "Authentication required. The website requires:\n  \
-            - Access from Telekom mobile network, OR\n  \
-            - Valid login session\n  \
-            \nTo test locally, use: --file <saved-html-file>"
+            "Access denied. This website requires an active Telekom mobile data connection.\n  \
+            \nTo test without Telekom network, use: --file <saved-html-file>"
                 .to_string(),
         ));
     }

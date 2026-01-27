@@ -2,12 +2,9 @@
 
 ## Important Note
 
-**The live website requires authentication!** When you run `datapass` without arguments, it tries to fetch from datapass.de which requires:
+**Network Requirement**: When you run `datapass` without arguments, it fetches from datapass.de which requires an active Telekom mobile data connection.
 
-- Active Telekom mobile data connection, OR
-- Valid session cookies
-
-For testing, always use the `--file` option with a saved HTML file.
+For testing or development without Telekom network access, use the `--file` option with a saved HTML file.
 
 ## Building and Running
 

@@ -56,7 +56,7 @@ pub struct Cli {
     #[arg(long, value_name = "FILE")]
     pub log: Option<String>,
 
-    /// Cookie string to use for authentication (e.g., "session=abc123; token=xyz")
+    /// Custom cookie string to send with HTTP request (advanced usage)
     #[arg(short = 'C', long, value_name = "COOKIES")]
     pub cookie: Option<String>,
 
