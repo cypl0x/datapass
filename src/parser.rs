@@ -23,7 +23,15 @@ pub fn parse_html(html: &str) -> Result<DataUsage> {
     // Extract data usage from the active data pass
     let (remaining_gb, total_gb) = extract_data_usage(&document)?;
 
-    Ok(DataUsage::new(remaining_gb, total_gb, Some(plan_name)))
+    // Extract validity date (optional)
+    let valid_until = extract_valid_until(&document);
+
+    Ok(DataUsage::new(
+        remaining_gb,
+        total_gb,
+        Some(plan_name),
+        valid_until,
+    ))
 }
 
 /// Extract plan name from the HTML title
@@ -98,6 +106,29 @@ fn extract_data_usage(document: &Html) -> Result<(f64, f64)> {
     Err(DatapassError::DataNotFound(
         "Could not find data usage information".to_string(),
     ))
+}
+
+/// Extract validity date from the HTML (optional)
+/// Looks for "Valid until:" or "Gültig bis:" in div.info-row elements
+fn extract_valid_until(document: &Html) -> Option<String> {
+    let info_row_selector = Selector::parse("div.info-row").ok()?;
+
+    for elem in document.select(&info_row_selector) {
+        let text = elem.text().collect::<String>();
+
+        // Check for both German and English variants
+        if text.contains("Valid until:") || text.contains("Gültig bis:") {
+            // Extract the date part after the colon
+            let date = text
+                .split(':')
+                .nth(1)
+                .map(|s| s.trim().to_string())?;
+
+            return Some(date);
+        }
+    }
+
+    None
 }
 
 /// Check if the page is an authentication/redirect page

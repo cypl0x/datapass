@@ -125,6 +125,7 @@ cargo run -- --file "test/Data usage - MagentaMobil Prepaid L.html" --color
 
 ```
 Plan: MagentaMobil Prepaid L
+Valid until: 12. February 2026
 Used:      22.12 GB (88.48%)
 Total:     25.00 GB (100%)
 Remaining: 2.88 GB (11.52%)
@@ -139,7 +140,8 @@ Remaining: 2.88 GB (11.52%)
   "total_gb": 25.0,
   "used_gb": 22.12,
   "percentage": 88.48,
-  "plan_name": "MagentaMobil Prepaid L"
+  "plan_name": "MagentaMobil Prepaid L",
+  "valid_until": "12. February 2026"
 }
 ```
 

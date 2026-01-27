@@ -42,6 +42,16 @@ fn display_human(data: &DataUsage, use_color: bool) {
         String::new()
     };
 
+    let valid_until_line = if let Some(valid_until) = &data.valid_until {
+        if use_color {
+            format!("Valid until: {}\n", valid_until.cyan())
+        } else {
+            format!("Valid until: {}\n", valid_until)
+        }
+    } else {
+        String::new()
+    };
+
     let used_str = format!("{:.2} GB", data.used_gb);
     let total_str = format!("{:.2} GB", data.total_gb);
     let remaining_str = format!("{:.2} GB", data.remaining_gb);
@@ -57,6 +67,7 @@ fn display_human(data: &DataUsage, use_color: bool) {
     };
 
     print!("{}", plan_line);
+    print!("{}", valid_until_line);
     println!("Used:      {} ({:.2}%)", used_display, data.percentage);
     println!("Total:     {} (100%)", total_display);
     println!(

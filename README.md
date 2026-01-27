@@ -143,6 +143,7 @@ datapass --log datapass.log
 
 ```
 Plan: MagentaMobil Prepaid L
+Valid until: 12. February 2026
 Used:      12.64 GB (24.78%)
 Total:     51.00 GB (100%)
 Remaining: 38.36 GB (75.22%)
@@ -157,7 +158,8 @@ Remaining: 38.36 GB (75.22%)
   "total_gb": 51.0,
   "used_gb": 12.64,
   "percentage": 24.78,
-  "plan_name": "MagentaMobil Prepaid L"
+  "plan_name": "MagentaMobil Prepaid L",
+  "valid_until": "12. February 2026"
 }
 ```
 

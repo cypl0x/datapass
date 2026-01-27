@@ -17,10 +17,18 @@ pub struct DataUsage {
 
     /// Plan name (e.g., "MagentaMobil Prepaid L")
     pub plan_name: Option<String>,
+
+    /// Valid until date (e.g., "12. February 2026")
+    pub valid_until: Option<String>,
 }
 
 impl DataUsage {
-    pub fn new(remaining_gb: f64, total_gb: f64, plan_name: Option<String>) -> Self {
+    pub fn new(
+        remaining_gb: f64,
+        total_gb: f64,
+        plan_name: Option<String>,
+        valid_until: Option<String>,
+    ) -> Self {
         let used_gb = total_gb - remaining_gb;
         let percentage = if total_gb > 0.0 {
             (used_gb / total_gb) * 100.0
@@ -34,6 +42,7 @@ impl DataUsage {
             used_gb,
             percentage,
             plan_name,
+            valid_until,
         }
     }
 
