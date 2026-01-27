@@ -117,10 +117,7 @@ fn extract_valid_until(document: &Html) -> Option<String> {
         // Check for both German and English variants
         if text.contains("Valid until:") || text.contains("Gültig bis:") {
             // Extract the date part after the colon
-            let date = text
-                .split(':')
-                .nth(1)
-                .map(|s| s.trim().to_string())?;
+            let date = text.split(':').nth(1).map(|s| s.trim().to_string())?;
 
             return Some(date);
         }
