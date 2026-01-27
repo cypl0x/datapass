@@ -7,7 +7,7 @@ mod tui;
 mod types;
 
 use clap::{CommandFactory, Parser};
-use clap_complete::{Shell as ClapShell, generate};
+use clap_complete::{generate, Shell as ClapShell};
 use clap_mangen::Man;
 use cli::{Cli, Shell};
 use error::Result;

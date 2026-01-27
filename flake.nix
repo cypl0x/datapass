@@ -104,7 +104,13 @@
           src = ./.;
           hooks = {
             # Formatting
-            rustfmt.enable = true;
+            rustfmt = {
+              enable = true;
+              packageOverrides = {
+                cargo = rustToolchain;
+                rustfmt = rustToolchain;
+              };
+            };
             alejandra.enable = true;
             prettier = {
               enable = true;
@@ -115,7 +121,10 @@
             # Linting
             clippy = {
               enable = true;
-              packageOverrides.clippy = pkgs.clippy;
+              packageOverrides = {
+                cargo = rustToolchain;
+                clippy = rustToolchain;
+              };
             };
             deadnix.enable = true;
             statix.enable = true;
@@ -124,7 +133,7 @@
             cargo-test = {
               enable = true;
               name = "cargo test";
-              entry = "${pkgs.cargo}/bin/cargo test";
+              entry = "${rustToolchain}/bin/cargo test";
               files = "\\.(rs|toml)$";
               pass_filenames = false;
             };
