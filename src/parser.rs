@@ -18,11 +18,16 @@ pub fn parse_html(html: &str) -> Result<DataUsage> {
     // Extract plan name from title
     let plan_name = extract_plan_name(&document)?;
 
-    // Extract data usage from the active data pass
-    let (remaining_gb, total_gb) = extract_data_usage(&document)?;
-
     // Extract validity date (optional)
     let valid_until = extract_valid_until(&document);
+
+    // Check if this is an unlimited plan
+    if is_unlimited_plan(&document) {
+        return Ok(DataUsage::new_unlimited(Some(plan_name), valid_until));
+    }
+
+    // Extract data usage from the active data pass
+    let (remaining_gb, total_gb) = extract_data_usage(&document)?;
 
     Ok(DataUsage::new(
         remaining_gb,
@@ -58,6 +63,39 @@ fn extract_plan_name(document: &Html) -> Result<String> {
         })?;
 
     Ok(plan_name)
+}
+
+/// Check if this is an unlimited data plan
+fn is_unlimited_plan(document: &Html) -> bool {
+    let section_selector = match Selector::parse("section.data-pass-instance") {
+        Ok(s) => s,
+        Err(_) => return false,
+    };
+
+    let volume_selector = match Selector::parse("div.volume") {
+        Ok(s) => s,
+        Err(_) => return false,
+    };
+
+    // Look for the active data pass section
+    for section in document.select(&section_selector) {
+        // Skip if this is the summation section
+        if let Some(id) = section.value().attr("id") {
+            if id == "summationPass" {
+                continue;
+            }
+        }
+
+        // Check if the volume div contains "unlimited"
+        for volume_elem in section.select(&volume_selector) {
+            let text = volume_elem.text().collect::<String>().to_lowercase();
+            if text.contains("unlimited") || text.contains("unbegrenzt") {
+                return true;
+            }
+        }
+    }
+
+    false
 }
 
 /// Extract data usage (remaining and total GB) from the active data pass
@@ -202,5 +240,80 @@ mod tests {
         // Check percentage calculation
         assert!((result.percentage - 88.48).abs() < 0.1);
         assert!((result.remaining_percentage() - 11.52).abs() < 0.1);
+    }
+
+    #[test]
+    fn test_parse_unlimited_plan() {
+        let html = r#"
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Data usage - MagentaMobil Prepaid Max</title>
+            </head>
+            <body>
+                <section class="data-pass-instance" id="pass-42213a5dad80000a">
+                    <div class="ribbon">
+                        <strong>active data pass</strong>
+                    </div>
+                    <div class="data-pass-instance__headline">
+                        <h2>MagentaMobil Prepaid Max</h2>
+                    </div>
+                    <div class="sub-headline">Your remaining data volume</div>
+                    <div class="volume fit-text-to-container">
+                        <strong>unlimited</strong>
+                    </div>
+                    <div class="info-row">Valid until: 27. February 2026</div>
+                </section>
+            </body>
+            </html>
+        "#;
+
+        let result = parse_html(html);
+        assert!(
+            result.is_ok(),
+            "Failed to parse unlimited plan HTML: {:?}",
+            result.err()
+        );
+
+        let data = result.unwrap();
+        assert!(data.is_unlimited, "Plan should be marked as unlimited");
+        assert_eq!(data.plan_name, Some("MagentaMobil Prepaid Max".to_string()));
+        assert_eq!(data.valid_until, Some("27. February 2026".to_string()));
+    }
+
+    #[test]
+    fn test_parse_unlimited_plan_german() {
+        let html = r#"
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Datennutzung - MagentaMobil Prepaid Max</title>
+            </head>
+            <body>
+                <section class="data-pass-instance" id="summationPass">
+                    <strong><span class="volume">unbegrenzt</span></strong>
+                </section>
+                <section class="data-pass-instance" id="pass-test">
+                    <div class="data-pass-instance__headline">
+                        <h2>MagentaMobil Prepaid Max</h2>
+                    </div>
+                    <div class="volume fit-text-to-container">
+                        <strong>unbegrenzt</strong>
+                    </div>
+                </section>
+            </body>
+            </html>
+        "#;
+
+        let result = parse_html(html);
+        assert!(
+            result.is_ok(),
+            "Failed to parse German unlimited plan HTML: {:?}",
+            result.err()
+        );
+
+        let data = result.unwrap();
+        assert!(data.is_unlimited, "Plan should be marked as unlimited");
+        assert_eq!(data.plan_name, Some("MagentaMobil Prepaid Max".to_string()));
     }
 }

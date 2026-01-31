@@ -168,33 +168,47 @@ impl TuiApp {
                 Style::default().fg(Color::Red),
             ))]
         } else if let Some(ref data) = self.data {
-            vec![
-                Line::from(vec![
-                    Span::styled("Used:      ", Style::default().fg(Color::White)),
+            if data.is_unlimited {
+                // Display unlimited plan info
+                vec![Line::from(vec![
+                    Span::styled("Data:      ", Style::default().fg(Color::White)),
                     Span::styled(
-                        format!("{:.2} GB ({:.2}%)", data.used_gb, data.percentage),
-                        Style::default().fg(Color::Blue),
+                        "unlimited",
+                        Style::default()
+                            .fg(Color::Green)
+                            .add_modifier(Modifier::BOLD),
                     ),
-                ]),
-                Line::from(vec![
-                    Span::styled("Total:     ", Style::default().fg(Color::White)),
-                    Span::styled(
-                        format!("{:.2} GB (100%)", data.total_gb),
-                        Style::default().fg(Color::White),
-                    ),
-                ]),
-                Line::from(vec![
-                    Span::styled("Remaining: ", Style::default().fg(Color::White)),
-                    Span::styled(
-                        format!(
-                            "{:.2} GB ({:.2}%)",
-                            data.remaining_gb,
-                            data.remaining_percentage()
+                ])]
+            } else {
+                // Display standard metered plan info
+                vec![
+                    Line::from(vec![
+                        Span::styled("Used:      ", Style::default().fg(Color::White)),
+                        Span::styled(
+                            format!("{:.2} GB ({:.2}%)", data.used_gb, data.percentage),
+                            Style::default().fg(Color::Blue),
                         ),
-                        Style::default().fg(Color::Green),
-                    ),
-                ]),
-            ]
+                    ]),
+                    Line::from(vec![
+                        Span::styled("Total:     ", Style::default().fg(Color::White)),
+                        Span::styled(
+                            format!("{:.2} GB (100%)", data.total_gb),
+                            Style::default().fg(Color::White),
+                        ),
+                    ]),
+                    Line::from(vec![
+                        Span::styled("Remaining: ", Style::default().fg(Color::White)),
+                        Span::styled(
+                            format!(
+                                "{:.2} GB ({:.2}%)",
+                                data.remaining_gb,
+                                data.remaining_percentage()
+                            ),
+                            Style::default().fg(Color::Green),
+                        ),
+                    ]),
+                ]
+            }
         } else {
             vec![Line::from("Loading data...")]
         };
@@ -206,16 +220,22 @@ impl TuiApp {
 
     fn render_gauge(&self, frame: &mut Frame, area: Rect) {
         let (ratio, label, color) = if let Some(ref data) = self.data {
-            let ratio = data.percentage / 100.0;
-            let label = format!("{:.2}% Used", data.percentage);
-            let color = if data.remaining_percentage() > 50.0 {
-                Color::Green
-            } else if data.remaining_percentage() > 20.0 {
-                Color::Yellow
+            if data.is_unlimited {
+                // For unlimited plans, show 100% with green color
+                (1.0, "unlimited".to_string(), Color::Green)
             } else {
-                Color::Red
-            };
-            (ratio, label, color)
+                // For metered plans, show actual usage
+                let ratio = data.percentage / 100.0;
+                let label = format!("{:.2}% Used", data.percentage);
+                let color = if data.remaining_percentage() > 50.0 {
+                    Color::Green
+                } else if data.remaining_percentage() > 20.0 {
+                    Color::Yellow
+                } else {
+                    Color::Red
+                };
+                (ratio, label, color)
+            }
         } else {
             (0.0, "Loading...".to_string(), Color::Gray)
         };

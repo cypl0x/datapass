@@ -20,6 +20,9 @@ pub struct DataUsage {
 
     /// Valid until date (e.g., "12. February 2026")
     pub valid_until: Option<String>,
+
+    /// Whether this is an unlimited data plan
+    pub is_unlimited: bool,
 }
 
 impl DataUsage {
@@ -43,6 +46,20 @@ impl DataUsage {
             percentage,
             plan_name,
             valid_until,
+            is_unlimited: false,
+        }
+    }
+
+    /// Create a new unlimited data plan
+    pub fn new_unlimited(plan_name: Option<String>, valid_until: Option<String>) -> Self {
+        Self {
+            remaining_gb: 0.0,
+            total_gb: 0.0,
+            used_gb: 0.0,
+            percentage: 0.0,
+            plan_name,
+            valid_until,
+            is_unlimited: true,
         }
     }
 
