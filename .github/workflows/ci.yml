@@ -18,6 +18,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Check formatting
         run: nix fmt -- --fail-on-change .
 
@@ -32,6 +36,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Run ${{ matrix.check }}
         run: nix build .#checks.x86_64-linux.${{ matrix.check }} -L
 
@@ -46,6 +54,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Build
         run: nix build -L
       - name: Run tests
@@ -59,6 +71,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Run Clippy
         run: nix build .#checks.x86_64-linux.datapass-clippy -L
 
@@ -70,6 +86,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Build documentation
         run: nix build .#checks.x86_64-linux.datapass-doc -L
 
@@ -97,6 +117,10 @@ jobs:
           extra-conf: |
             extra-platforms = ${{ matrix.system == 'aarch64-linux' && 'aarch64-linux' || '' }}
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Set up QEMU (for aarch64-linux)
         if: matrix.system == 'aarch64-linux'
         run: |
@@ -120,6 +144,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v15
       - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: cachix/cachix-action@v15
+        with:
+          name: datapass
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Build Docker image
         run: nix build .#dockerImage -L
       - name: Push to Docker Hub

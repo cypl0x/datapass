@@ -1,4 +1,9 @@
 {
+  nixConfig = {
+    extra-substituters = ["https://datapass.cachix.org"];
+    extra-trusted-public-keys = ["datapass.cachix.org-1:OgAST6ZcreyRESQflFWqPACL4uQnoEDfl5Nl8DN37bo="];
+  };
+
   description = "datapass - CLI tool to fetch and display mobile data usage from datapass.de";
 
   inputs = {
