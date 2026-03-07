@@ -55,11 +55,20 @@ cd datapass
 nix build
 ```
 
-### Using Cargo
+### Using Cargo (crates.io)
 
 ```bash
-cargo install --git https://github.com/cypl0x/datapass
+cargo install datapass
 ```
+
+### Using Docker
+
+```bash
+docker pull cypl0x/datapass:latest
+docker run --rm --network host cypl0x/datapass:latest
+```
+
+> **Note**: `--network host` is required so Telekom's network detection works correctly (see [Docker](#docker) section for details).
 
 ### From Source
 
