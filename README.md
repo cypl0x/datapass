@@ -267,6 +267,33 @@ cargo test -- --nocapture
 cargo test test_parse_test_file
 ```
 
+## Docker
+
+### Build and load locally
+
+```bash
+nix build .#dockerImage
+./result | docker load
+docker run --rm --network host datapass:latest
+```
+
+> **Note**: Use `--network host` so the container shares the host's network stack. Telekom's datapass.de detects the mobile network by IP address — Docker's default bridge NAT breaks this detection.
+
+### Publish to Docker Hub
+
+```bash
+nix build .#dockerImage
+./result | skopeo copy docker-archive:/dev/stdin docker://docker.io/youruser/datapass:latest
+```
+
+`skopeo` is available in the Nix dev shell (`nix develop`).
+
+### Using a local HTML file inside the container
+
+```bash
+docker run --rm -v /path/to/saved-page.html:/data/page.html datapass:latest --file /data/page.html
+```
+
 ## Cross-Compilation
 
 Using Nix, you can easily build for multiple platforms:

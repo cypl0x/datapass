@@ -88,6 +88,20 @@
             doCheck = true;
           });
 
+        # Docker image (stream to avoid materializing tarball on disk)
+        # Usage:
+        #   nix build .#dockerImage && ./result | docker load
+        #   nix build .#dockerImage && ./result | skopeo copy docker-archive:/dev/stdin docker://docker.io/youruser/datapass:latest
+        dockerImage = pkgs.dockerTools.streamLayeredImage {
+          name = "datapass";
+          tag = "latest";
+          contents = [datapass pkgs.cacert];
+          config = {
+            Cmd = ["${datapass}/bin/datapass"];
+            Env = ["SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"];
+          };
+        };
+
         # Treefmt configuration
         treefmtEval = treefmt-nix.lib.evalModule pkgs {
           projectRootFile = "flake.nix";
@@ -143,7 +157,7 @@
         # Package outputs
         packages = {
           default = datapass;
-          inherit datapass;
+          inherit datapass dockerImage;
         };
 
         # Development shell
@@ -174,6 +188,9 @@
 
             # Cross compilation tools
             cargo-cross
+
+            # Container tools
+            skopeo
 
             # Useful utilities
             ripgrep
